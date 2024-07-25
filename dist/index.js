@@ -3777,12 +3777,21 @@ const {
 } = commander;
 
 var name = "rsbuild-watch";
-var version = "1.0.0";
+var version = "1.0.3";
 var description = "";
 var main = "index.js";
+var homepage = "https://github.com/kurorinto/rsbuild-watch";
+var repository = {
+	type: "git",
+	url: "https://github.com/kurorinto/rsbuild-watch"
+};
 var bin = {
 	"rsbuild-watch": "bin/rsbuild-watch"
 };
+var files = [
+	"bin",
+	"dist"
+];
 var scripts = {
 	dev: "npm run build -- --watch",
 	build: "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --bundleConfigAsCjs",
@@ -3807,25 +3816,38 @@ var dependencies = {
 	chokidar: "^3.6.0",
 	picocolors: "^1.0.1"
 };
+var engines = {
+	node: ">=16.7.0"
+};
 var pkg = {
 	name: name,
 	version: version,
 	description: description,
 	main: main,
+	homepage: homepage,
+	repository: repository,
 	bin: bin,
+	files: files,
 	scripts: scripts,
 	author: author,
 	license: license,
 	devDependencies: devDependencies,
-	dependencies: dependencies
+	dependencies: dependencies,
+	engines: engines
 };
 
 var applyCommonOptions = function (command) {
     command
-        .option("-wc --watch-config <watch-config>", "specifies the configuration file to listen to, if there are more than one, they can be separated by _")
+        .option("-wc --watch-config <watch-config>", "specifies the configuration file to listen to, if there are more than one, they can be separated by ^")
         .option("-c --config <config>", "specify the configuration file, can be a relative or absolute path")
         .option("--env-mode <mode>", "specify the env mode to load the `.env.[mode]` file")
         .option("--env-dir <dir>", "specify the directory to load `.env` files");
+};
+var applyServerOptions = function (command) {
+    command
+        .option("-o --open [url]", "open the page in browser on startup")
+        .option("--port <port>", "specify a port number for server to listen")
+        .option("--host <host>", "specify the host that the server listens to");
 };
 var runRsbuildDevServer = function (options) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, rsbuildConfig, filePath, rsbuild, devServer;
@@ -3853,6 +3875,7 @@ function run() {
     program.version(pkg.version);
     var devCommander = program.command("dev");
     applyCommonOptions(devCommander);
+    applyServerOptions(devCommander);
     devCommander.action(function (options) { return __awaiter(_this, void 0, void 0, function () {
         var devServer, watcher;
         var _this = this;
@@ -3865,7 +3888,7 @@ function run() {
                     })];
                 case 1:
                     devServer = (_a.sent()).devServer;
-                    watcher = chokidar.watch((options.watchConfig || "").split("_"), {
+                    watcher = chokidar.watch((options.watchConfig || "").split("^"), {
                         persistent: true,
                         ignoreInitial: true,
                     });
@@ -3876,7 +3899,7 @@ function run() {
                                 case 0:
                                     tempPath = path.split("/");
                                     fileName = tempPath[tempPath.length - 1];
-                                    core.logger.info("Restart because ".concat(pc.yellow(fileName), " is changed.\n"));
+                                    core.logger.info("".concat(pc.green("Restart because ".concat(pc.yellow(fileName), " is changed.")), "\n"));
                                     devServer.server.close();
                                     return [4 /*yield*/, runRsbuildDevServer({
                                             cwd: process.cwd(),
