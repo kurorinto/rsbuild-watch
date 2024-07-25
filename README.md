@@ -3,7 +3,7 @@
 When developing with `rsbuild`, you can execute the dev command using the following syntax:
 
 ```bash  
-rsbuild-watch dev -wc/--watch-config file1_fil2_file3
+rsbuild-watch dev -wc/--watch-config file1^fil2^file3
 ```
 By using this feature, you can ensure that your development environment always reflects the latest configuration changes, streamlining your workflow and enhancing productivity.
 
@@ -28,5 +28,5 @@ export default config;
 ```
 try to use `rsbuild-watch`!
 ```bash
-rsbuild-watch dev -wc/--watch-config ./configs/configA.ts_./configs/configB.ts
+rsbuild-watch dev -wc/--watch-config ./configs/configA.ts^./configs/configB.ts
 ```

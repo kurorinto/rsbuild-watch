@@ -8,7 +8,7 @@ const applyCommonOptions = (command: Command) => {
   command
     .option(
       "-wc --watch-config <watch-config>",
-      "specifies the configuration file to listen to, if there are more than one, they can be separated by _",
+      "specifies the configuration file to listen to, if there are more than one, they can be separated by ^",
     )
     .option(
       "-c --config <config>",
@@ -16,6 +16,13 @@ const applyCommonOptions = (command: Command) => {
     )
     .option("--env-mode <mode>", "specify the env mode to load the `.env.[mode]` file")
     .option("--env-dir <dir>", "specify the directory to load `.env` files");
+};
+
+const applyServerOptions = (command: Command) => {
+  command
+    .option("-o --open [url]", "open the page in browser on startup")
+    .option("--port <port>", "specify a port number for server to listen")
+    .option("--host <host>", "specify the host that the server listens to");
 };
 
 const runRsbuildDevServer = async (options: Parameters<typeof loadConfig>[0]) => {
@@ -38,6 +45,7 @@ export function run() {
   const devCommander = program.command("dev");
 
   applyCommonOptions(devCommander);
+  applyServerOptions(devCommander);
 
   devCommander.action(async (options) => {
     let { devServer } = await runRsbuildDevServer({
@@ -47,14 +55,14 @@ export function run() {
     });
 
     // 监听配置文件
-    const watcher = watch((options.watchConfig || "").split("_"), {
+    const watcher = watch((options.watchConfig || "").split("^"), {
       persistent: true,
       ignoreInitial: true,
     });
     watcher.on("change", async (path) => {
       const tempPath = path.split("/");
       const fileName = tempPath[tempPath.length - 1];
-      logger.info(`Restart because ${pc.yellow(fileName)} is changed.\n`);
+      logger.info(`${pc.green(`Restart because ${pc.yellow(fileName)} is changed.`)}\n`);
 
       devServer.server.close();
       ({ devServer } = await runRsbuildDevServer({
