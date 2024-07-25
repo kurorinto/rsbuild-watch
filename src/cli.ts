@@ -4,6 +4,16 @@ import pkg from "../package.json" assert { type: "json" };
 import { watch } from "chokidar";
 import pc from "picocolors";
 
+interface DevCommandOptions {
+  config?: string;
+  envDir?: string;
+  envMode?: string;
+  open?: boolean | string;
+  host?: string;
+  port?: number;
+  watchConfig?: string;
+}
+
 const applyCommonOptions = (command: Command) => {
   command
     .option(
@@ -47,7 +57,7 @@ export function run() {
   applyCommonOptions(devCommander);
   applyServerOptions(devCommander);
 
-  devCommander.action(async (options) => {
+  devCommander.action(async (options: DevCommandOptions) => {
     let { devServer } = await runRsbuildDevServer({
       cwd: process.cwd(),
       path: options.config,
@@ -55,22 +65,24 @@ export function run() {
     });
 
     // 监听配置文件
-    const watcher = watch((options.watchConfig || "").split("^"), {
-      persistent: true,
-      ignoreInitial: true,
-    });
-    watcher.on("change", async (path) => {
-      const tempPath = path.split("/");
-      const fileName = tempPath[tempPath.length - 1];
-      logger.info(`${pc.green(`Restart because ${pc.yellow(fileName)} is changed.`)}\n`);
+    if (options.watchConfig) {
+      const watcher = watch(options.watchConfig.split("^"), {
+        persistent: true,
+        ignoreInitial: true,
+      });
+      watcher.on("change", async (path) => {
+        const tempPath = path.split("/");
+        const fileName = tempPath[tempPath.length - 1];
+        logger.info(`${pc.green(`Restart because ${pc.yellow(fileName)} is changed.`)}\n`);
 
-      devServer.server.close();
-      ({ devServer } = await runRsbuildDevServer({
-        cwd: process.cwd(),
-        path: options.config,
-        envMode: options.envMode,
-      }));
-    });
+        devServer.server.close();
+        ({ devServer } = await runRsbuildDevServer({
+          cwd: process.cwd(),
+          path: options.config,
+          envMode: options.envMode,
+        }));
+      });
+    }
   });
 
   program.parse();

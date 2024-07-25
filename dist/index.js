@@ -3777,7 +3777,7 @@ const {
 } = commander;
 
 var name = "rsbuild-watch";
-var version = "1.0.3";
+var version = "1.0.4";
 var description = "";
 var main = "index.js";
 var homepage = "https://github.com/kurorinto/rsbuild-watch";
@@ -3888,30 +3888,33 @@ function run() {
                     })];
                 case 1:
                     devServer = (_a.sent()).devServer;
-                    watcher = chokidar.watch((options.watchConfig || "").split("^"), {
-                        persistent: true,
-                        ignoreInitial: true,
-                    });
-                    watcher.on("change", function (path) { return __awaiter(_this, void 0, void 0, function () {
-                        var tempPath, fileName;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    tempPath = path.split("/");
-                                    fileName = tempPath[tempPath.length - 1];
-                                    core.logger.info("".concat(pc.green("Restart because ".concat(pc.yellow(fileName), " is changed.")), "\n"));
-                                    devServer.server.close();
-                                    return [4 /*yield*/, runRsbuildDevServer({
-                                            cwd: process.cwd(),
-                                            path: options.config,
-                                            envMode: options.envMode,
-                                        })];
-                                case 1:
-                                    (devServer = (_a.sent()).devServer);
-                                    return [2 /*return*/];
-                            }
+                    // 监听配置文件
+                    if (options.watchConfig) {
+                        watcher = chokidar.watch(options.watchConfig.split("^"), {
+                            persistent: true,
+                            ignoreInitial: true,
                         });
-                    }); });
+                        watcher.on("change", function (path) { return __awaiter(_this, void 0, void 0, function () {
+                            var tempPath, fileName;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        tempPath = path.split("/");
+                                        fileName = tempPath[tempPath.length - 1];
+                                        core.logger.info("".concat(pc.green("Restart because ".concat(pc.yellow(fileName), " is changed.")), "\n"));
+                                        devServer.server.close();
+                                        return [4 /*yield*/, runRsbuildDevServer({
+                                                cwd: process.cwd(),
+                                                path: options.config,
+                                                envMode: options.envMode,
+                                            })];
+                                    case 1:
+                                        (devServer = (_a.sent()).devServer);
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); });
+                    }
                     return [2 /*return*/];
             }
         });
