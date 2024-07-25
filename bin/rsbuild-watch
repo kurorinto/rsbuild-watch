@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+const { run } = require('../dist');
+const { logger } = require('@rsbuild/core');
+
+async function main() {
+  try {
+    run();
+  } catch (err) {
+    logger.error(err);
+  }
+}
+
+main();

@@ -1,0 +1,33 @@
+{
+  "name": "rsbuild-watch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "rsbuild-watch": "bin/rsbuild-watch"
+  },
+  "scripts": {
+    "dev": "npm run build -- --watch",
+    "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --bundleConfigAsCjs",
+    "lint": "biome check --write",
+    "local": "npm run build && npm ln"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@rsbuild/core": "^1.0.1-beta.4",
+    "@types/node": "^20.14.12",
+    "commander": "^12.1.0",
+    "rollup": "^4.19.0",
+    "rollup-plugin-clear": "^2.0.7"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "picocolors": "^1.0.1"
+  }
+}
