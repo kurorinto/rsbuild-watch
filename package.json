@@ -1,11 +1,20 @@
 {
   "name": "rsbuild-watch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
+  "homepage": "https://github.com/kurorinto/rsbuild-watch",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kurorinto/rsbuild-watch"
+  },
   "bin": {
     "rsbuild-watch": "bin/rsbuild-watch"
   },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "scripts": {
     "dev": "npm run build -- --watch",
     "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --bundleConfigAsCjs",
@@ -29,5 +38,8 @@
   "dependencies": {
     "chokidar": "^3.6.0",
     "picocolors": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=16.7.0"
   }
 }
